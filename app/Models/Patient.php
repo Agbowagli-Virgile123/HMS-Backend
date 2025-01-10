@@ -9,14 +9,15 @@ class Patient extends Model
 {
     use HasFactory;
 
+    protected $table = 'patients';
     protected $primaryKey = 'patientId'; // Set primary key
     public $incrementing = false; // patientId is not auto-incrementing
     protected $keyType = 'string'; // patientId is a string
 
     // Define the fillable fields
     protected $fillable = [
-        'firstname',
-        'lastname',
+        'firstName',
+        'lastName',
         'dob',
         'gender',
         'phone',

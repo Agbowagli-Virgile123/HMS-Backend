@@ -39,20 +39,30 @@ class UserController extends Controller
             'status' => $request->status,
         ]);
 
+          // Generate a Sanctum token
+        $token = $user->createToken($request->employeeId.'Auth-Token')->plainTextToken;
 
-        return response()->json(['user' => $user], 201);
+        // Return the token and user details in the response
+        return response()->json([
+            'massage'=> "Registration Sucessfully",
+            'token_type'=> 'Bearer',
+            'token' => $token,
+            // 'user' => $user,
+        ], 201);
+
+
     }
 
     public function login(Request $request)
 {
     // Validate the input
     $request->validate([
-        'email' => 'required|email',  // Ensure employeeId is a string
+        'employeeId' => 'required|string',  // Ensure employeeId is a string
         'password' => 'required|string',    // Ensure password is a string
     ]);
 
     // Find the user by employeeId
-    $user = User::where('email', $request->email)->first();
+    $user = User::where('employeeId', $request->employeeId)->first();
 
     // Check if the user exists and the password matches
     if (!$user || !Hash::check($request->password, $user->password)) {
@@ -60,10 +70,12 @@ class UserController extends Controller
     }
 
     // Generate a Sanctum token
-    $token = $user->createToken('token-name')->plainTextToken;
+    $token = $user->createToken($request->employeeId.'Auth-Token')->plainTextToken;
 
     // Return the token and user details in the response
     return response()->json([
+        'message' => "Logged in Successfully",
+        'token_type'=> 'Bearer',
         'token' => $token,
         'employeeId' => $user->employeeId,
         'firstName' => $user->firstName,
@@ -73,17 +85,12 @@ class UserController extends Controller
         'profileImg' => $user->userInfo ? $user->userInfo->profileImg : null,  // Safe access to profileImg in user_info
     ], 200);
 }
+public function logout(Request $request)
+{
+    // Revoke the token that was used to authenticate the current request
+    $request->user()->currentAccessToken()->delete();
 
-    public function logout(Request $request)
-    {
-        // Check if the user is authenticated
-        if ($request->user()) {
-            // Delete the current access token
-            $request->user()->currentAccessToken()->delete();
-            
-            return response()->json(['message' => 'Logged out successfully'], 200);
-        }
+    return response()->json(['message' => 'Logged out successfully'], 200);
+}
 
-        return response()->json(['message' => 'User  not authenticated'], 401);
-    }
 }

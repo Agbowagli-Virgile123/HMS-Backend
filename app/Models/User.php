@@ -13,14 +13,14 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable,HasApiTokens;
 
-    protected $primaryKey = 'employeeId'; // Define the primary key
-    public $incrementing = false;        // Indicate it's not an auto-incrementing key
-    protected $keyType = 'string';       // Define the key type as string
+    // protected $primaryKey = 'employeeId'; // Define the primary key
+    // public $incrementing = false;        // Indicate it's not an auto-incrementing key
+    // protected $keyType = 'string';       // Define the key type as string
 
-    public function getAuthIdentifier()
-    {
-        return $this->employeeId;
-    }
+    // public function getAuthIdentifier()
+    // {
+    //     return $this->employeeId;
+    // }
     /**
      * The attributes that are mass assignable.
      *

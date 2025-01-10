@@ -18,23 +18,26 @@ return new class extends Migration
         // Create the 'roles' table
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->string('roleName')->unique();
+            // roleName must be unique
+            $table->string('roleName');
             $table->timestamps();
         });
 
         // Create the 'departments' table without foreign key constraint
         Schema::create('departments', function (Blueprint $table) {
             $table->id();
-            $table->string('departmentName')->unique();
+            // departmentName must be unique
+            $table->string('departmentName');
             $table->timestamps();
         });
         
 
         // Create the 'users' table
         Schema::create('users', function (Blueprint $table) {
+            $table->id();
             // Add employeeId as a primary key
             $table->string('employeeId')->unique();
-            $table->primary('employeeId'); // Make employeeId the primary key
+            // $table->primary('employeeId'); // Make employeeId the primary key
             $table->foreignIdFor(Role::class)->constrained('roles')->onDelete('cascade'); // Role reference
             // Ensure that department_id is nullable and references the departments table
             $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null'); 
@@ -85,20 +88,31 @@ return new class extends Migration
         });
 
         // Create the 'sessions' table
+        // Schema::create('sessions', function (Blueprint $table) {
+        //     $table->string('id')->primary();
+        //     // Make employeeId the foreign key reference instead of the default 'id' column
+        //     $table->string('employeeId'); // This matches the type of 'employeeId' in the 'users' table
+        //     $table->foreign('employeeId') // Define the foreign key constraint
+        //           ->references('employeeId') // Reference to 'employeeId' in the 'users' table
+        //           ->on('users') // The 'users' table
+        //           ->onDelete('cascade'); // Cascade delete if the referenced user is deleted
+        
+        //     $table->string('ip_address', 45)->nullable();
+        //     $table->text('user_agent')->nullable();
+        //     $table->longText('payload');
+        //     $table->integer('last_activity')->index();
+        // });
+
+
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            // Make employeeId the foreign key reference instead of the default 'id' column
-            $table->string('employeeId'); // This matches the type of 'employeeId' in the 'users' table
-            $table->foreign('employeeId') // Define the foreign key constraint
-                  ->references('employeeId') // Reference to 'employeeId' in the 'users' table
-                  ->on('users') // The 'users' table
-                  ->onDelete('cascade'); // Cascade delete if the referenced user is deleted
-        
+            $table->foreignId('user_id')->nullable()->index();
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
     }
 
     /**

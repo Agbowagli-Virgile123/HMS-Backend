@@ -16,15 +16,15 @@ return new class extends Migration
     {
         Schema::create('patients', function (Blueprint $table) {
             $table->string('patientId')->unique()->primary();
-            $table->string('firstname');
-            $table->string('lastname');
+            $table->string('firstName');
+            $table->string('lastName');
             $table->string('dob');
             $table->string('gender');
             $table->string('phone');
             $table->string('email')->nullable();
             $table->string('address');
             $table->string('purpose');
-            $table->enum('status', ['pending', 'registered','discharged'])->default('pending');
+            $table->enum('status', ['pending', 'registered','discharged','admited','deseased','transfered'])->default('pending');
             $table->string('nhis')->nullable();
             $table->timestamps();
         });
