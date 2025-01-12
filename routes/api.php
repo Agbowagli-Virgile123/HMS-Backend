@@ -1,9 +1,10 @@
 <?php
 
-use App\Http\Controllers\PatientController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\Users\UserController;
+use App\Http\Controllers\Patients\PatientController;
+
 
 
 Route::get('/user',function(Request $request){
@@ -20,8 +21,9 @@ Route::middleware(['auth:sanctum'])->group(function(){
 
     //Patients Routes
     Route::get('/patients', [PatientController::class, 'allPatients']);
-    Route::get('/Inpatients', [PatientController::class, 'inStatus']);
-    Route::get('/Outpatients', [PatientController::class, 'outStatus']);
+    Route::get('/Pendingpatients', [PatientController::class, 'pendiengPatients']);
+    Route::get('/Inpatients', [PatientController::class, 'inPatients']);
+    Route::get('/Outpatients', [PatientController::class, 'outPatients']);
     Route::get('/patients/{patient}' ,[PatientController::class ,'show']);
     Route::post('/patients', [PatientController::class,'store']);
     Route::patch('/patients/{patient}' ,[PatientController::class ,'update']);

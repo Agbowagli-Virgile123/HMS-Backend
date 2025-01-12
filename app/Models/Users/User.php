@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Users;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -12,11 +12,9 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable,HasApiTokens;
-
-    // protected $primaryKey = 'employeeId'; // Define the primary key
-    // public $incrementing = false;        // Indicate it's not an auto-incrementing key
-    // protected $keyType = 'string';       // Define the key type as string
-
+    protected $primaryKey = 'employeeId'; // Set employeeId as the primary key
+    public $incrementing = false; // Disable auto-incrementing for the primary key
+    protected $keyType = 'string'; // Set key type to string if using employeeId as a string
     // public function getAuthIdentifier()
     // {
     //     return $this->employeeId;

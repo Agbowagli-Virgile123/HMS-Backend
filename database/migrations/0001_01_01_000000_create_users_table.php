@@ -1,12 +1,12 @@
 <?php
 
-use App\Models\Department;
+use App\Models\Users\Department;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Role;
+use App\Models\Users\Role;
 // use App\Models\Department;
-use App\Models\User;
+use App\Models\Users\User;
 
 return new class extends Migration
 {
@@ -34,13 +34,16 @@ return new class extends Migration
 
         // Create the 'users' table
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            // Add employeeId as a primary key
-            $table->string('employeeId')->unique();
-            // $table->primary('employeeId'); // Make employeeId the primary key
-            $table->foreignIdFor(Role::class)->constrained('roles')->onDelete('cascade'); // Role reference
-            // Ensure that department_id is nullable and references the departments table
-            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null'); 
+            // Define employeeId as the primary key
+            $table->string('employeeId')->primary();
+        
+            // Foreign key for Role
+            $table->foreignIdFor(Role::class)->constrained('roles')->onDelete('cascade');
+        
+            // Foreign key for department, nullable
+            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null');
+        
+            // Other columns
             $table->string('firstName');
             $table->string('lastName');
             $table->string('email')->unique();
@@ -51,7 +54,8 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
-
+        
+        
         // Create the 'hod' table without foreign key constraint
         Schema::create('hods', function (Blueprint $table) {
             $table->id();
@@ -78,7 +82,6 @@ return new class extends Migration
             $table->string('profileImg')->nullable();
             $table->timestamps();
         });
-        
 
         // Create the 'password_reset_tokens' table
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -87,31 +90,27 @@ return new class extends Migration
             $table->timestamp('created_at')->nullable();
         });
 
-        // Create the 'sessions' table
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id')->primary();  // Session ID (Primary Key)
+            $table->string('employeeId')->nullable()->index();  // Reference to employeeId in users table
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        
+            // Set the foreign key to reference employeeId from the users table
+            $table->foreign('employeeId')->references('employeeId')->on('users')->onDelete('set null');
+        });
+        
+
         // Schema::create('sessions', function (Blueprint $table) {
         //     $table->string('id')->primary();
-        //     // Make employeeId the foreign key reference instead of the default 'id' column
-        //     $table->string('employeeId'); // This matches the type of 'employeeId' in the 'users' table
-        //     $table->foreign('employeeId') // Define the foreign key constraint
-        //           ->references('employeeId') // Reference to 'employeeId' in the 'users' table
-        //           ->on('users') // The 'users' table
-        //           ->onDelete('cascade'); // Cascade delete if the referenced user is deleted
-        
+        //     $table->foreignId('user_id')->nullable()->index();
         //     $table->string('ip_address', 45)->nullable();
         //     $table->text('user_agent')->nullable();
         //     $table->longText('payload');
         //     $table->integer('last_activity')->index();
         // });
-
-
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
-        });
 
     }
 
@@ -123,8 +122,9 @@ return new class extends Migration
         Schema::dropIfExists('sessions');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('user_info');
-        Schema::dropIfExists('users');
         Schema::dropIfExists('departments');
+        Schema::dropIfExists('hods');
         Schema::dropIfExists('roles');
+        Schema::dropIfExists('users');
     }
 };

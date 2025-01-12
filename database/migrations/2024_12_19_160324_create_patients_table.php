@@ -3,9 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Patient;
-use App\Models\Employee;
-use App\Models\Prescription;
+use App\Models\Patients\Patient;
+use App\Models\Users\User;
+use App\Models\Patients\Prescription;
 
 return new class extends Migration
 {
@@ -26,13 +26,15 @@ return new class extends Migration
             $table->string('purpose');
             $table->enum('status', ['pending', 'registered','discharged','admited','deseased','transfered'])->default('pending');
             $table->string('nhis')->nullable();
+            $table->enum('emgRelationship',['parent','spouse','sibling','other']);    
+            $table->string('emgPhone');
             $table->timestamps();
         });
 
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Patient::class,'patientId');
-            $table->foreignIdFor(Employee::class,'empId');
+            $table->foreignIdFor(User::class,'employeeId');
             $table->string('bookerId');
             $table->text('purpose');
             $table->string('department');
@@ -45,7 +47,7 @@ return new class extends Migration
         Schema::create('vitals', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Patient::class,'patientId');
-            $table->foreignIdFor(Employee::class,'empId');
+            $table->foreignIdFor(User::class,'employeeId');
             $table->string('bloodPressure');
             $table->string('bpm')->nullable();
             $table->string('temperature');
@@ -60,7 +62,7 @@ return new class extends Migration
         Schema::create('diagnosis', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Patient::class,'patientId');
-            $table->foreignIdFor(Employee::class,'empId');
+            $table->foreignIdFor(User::class,'employeeId');
             $table->text('diagnosis');
             $table->text('recommendation');
             $table->timestamps();
@@ -69,7 +71,7 @@ return new class extends Migration
         Schema::create('prescriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Patient::class,'patientId');
-            $table->foreignIdFor(Employee::class,'empId');
+            $table->foreignIdFor(User::class,'employeeId');
             $table->string('prescriptionDate');
             $table->text('note');
             $table->timestamps();
@@ -115,6 +117,14 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('admission');
+        Schema::dropIfExists('testResults');
+        Schema::dropIfExists('billings');
+        Schema::dropIfExists('prescriptionItems');
+        Schema::dropIfExists('prescriptions');
+        Schema::dropIfExists('diagnosis');
+        Schema::dropIfExists('vitals');
+        Schema::dropIfExists('appointments');
         Schema::dropIfExists('patients');
     }
 };

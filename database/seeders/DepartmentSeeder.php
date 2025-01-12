@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Department;
+use App\Models\Users\Department;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -16,3 +16,4 @@ class DepartmentSeeder extends Seeder
         Department::factory(5)->create();
     }
 }
+

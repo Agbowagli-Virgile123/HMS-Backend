@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Patients;
 
 use Illuminate\Http\Request;
-use App\Models\Patient;
+use App\Models\Patients\Patient;
 use App\Http\Resources\PatientResource;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
 class PatientController extends Controller
 {
 
@@ -34,7 +35,39 @@ class PatientController extends Controller
     }
     
 
-    public function outStatus(Request $request)
+    
+    public function pendiengPatients(Request $request)
+    {
+        // Get the number of items per page from the request, default to 10
+        $perPage = $request->input('per_page', 10);
+    
+        // Define the statuses to filter
+        $statuses = ['pending'];
+    
+        // Fetch patients with the specified statuses and apply pagination
+        $patients = Patient::whereIn('status', $statuses)
+            ->latest('updated_at')
+            ->simplePaginate($perPage);
+    
+        // Check if any patients exist
+        if ($patients->count() > 0) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Patients retrieved successfully',
+                'data' => $patients,
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No records available',
+                'data' => [],
+            ], 200);
+        }
+    }
+
+
+
+    public function outPatients(Request $request)
     {
         // Get the number of items per page from the request, default to 10
         $perPage = $request->input('per_page', 10);
@@ -64,13 +97,14 @@ class PatientController extends Controller
     }
 
 
-    public function inStatus(Request $request)
+
+    public function inPatients(Request $request)
     {
         // Get the number of items per page from the request, default to 10
         $perPage = $request->input('per_page', 10);
     
         // Define the statuses to filter
-        $statuses = ['pending', 'registered', 'admited'];
+        $statuses = ['registered', 'admited'];
     
         // Fetch patients with the specified statuses and apply pagination
         $patients = Patient::whereIn('status', $statuses)
@@ -97,7 +131,7 @@ class PatientController extends Controller
     public function store(Request $request)
     {
         // Validate the request data
-        $validated = $request->validate([
+        $validated = Validator::make($request->all(),[
             // 'patientId' => 'required|string|unique:patients,patientId',
             'firstName' => 'required|string|max:255',
             'lastName' => 'required|string|max:255',
@@ -109,10 +143,26 @@ class PatientController extends Controller
             'purpose' => 'required|string|max:255',
             'status' => 'required|string|in:pending,registered,discharged',
             'nhis' => 'nullable|string|max:50',
+            'emgRelationship' =>'required|string|in:parent,spouse,sibling,other',
+            'emgPhone' => 'required|string'
         ]);
 
         // Create a new patient
-        $patient = Patient::create($validated);
+        $patient = Patient::create([
+
+            'firstName' => $request['firstName'],
+            'lastName' => $request['lastName'],
+            'dob' => $request['dob'],
+            'gender' => $request['gender'],
+            'phone' => $request['phone'],
+            'email' => $request['email'],
+            'address' => $request['address'],
+            'purpose' => $request['purpose'],
+            'status' => $request['status'],
+            'nhis' => $request['nhis'],
+            'emgRelationship' =>$request['emgRelationship'],
+            'emgPhone' => $request['emgPhone'],
+        ]);
 
         // Log::info('Patient created:', $patient->toArray());
 
@@ -126,7 +176,10 @@ class PatientController extends Controller
 
 
     public function show(Patient $patient){
-        return new PatientResource($patient);
+        return response()->json([
+            'message' => 'Patient retrieved successfully by Id',
+            'data' => $patient,
+        ], 200);
     }
 
     public function update(Request $request,Patient $patient){
@@ -143,6 +196,8 @@ class PatientController extends Controller
             'purpose' => 'required|string|max:255',
             'status' => 'required|string|in:pending,registered,discharged',
             'nhis' => 'nullable|string|max:50',
+            'emgRelationship' =>'required|string|in:parent,spouse,sibling,other',
+            'emgPhone' => 'required|string'
         ]);
 
         // Update the patient
@@ -157,7 +212,9 @@ class PatientController extends Controller
             'address' => $request['address'],
             'purpose' => $request['purpose'],
             'status' => $request['status'],
-            'nhis' => $request['nhis']
+            'nhis' => $request['nhis'],
+            'emgRelationship' =>$request['emgRelationship'],
+            'emgPhone' => $request['emgPhone'],
         ]);
 
         // Log::info('Patient created:', $patient->toArray());

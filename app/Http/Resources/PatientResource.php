@@ -29,6 +29,8 @@ class PatientResource extends JsonResource
             'purpose' =>  $this->purpose,
             'status' =>  $this->status,
             'nhis' =>  $this->nhis,
+            'emgRelationship' =>$this->emgRelationship,
+            'emgPhone' => $this->emgPhone,
         ];
     }
 }
