@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Models\Patients\Appointment;
+use App\Models\Patients\Vital;
+use App\Models\Patients\Diagnosis;
+use App\Models\Patients\Prescription;
 
 class User extends Authenticatable
 {
@@ -64,19 +68,40 @@ class User extends Authenticatable
 
        // Define the relationship with Department
     // User model
-public function department()
-{
+    public function department()
+    {
     return $this->belongsTo(Department::class, 'department_id');
-}
+    }
 
-public function role()
-{
-    return $this->belongsTo(Role::class);
-}
+    public function role()
+    {
+         return $this->belongsTo(Role::class);
+    }
 
-public function userInfo()
-{
+    public function userInfo()
+    {
     return $this->hasOne(UserInfo::class, 'employeeId', 'employeeId');
-}
+    }
 
+     /**
+     * Get the appointments managed by the user (employee).
+     */
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'employeeId');
+    }
+
+    public function vitals()
+    {
+        return $this->hasMany(Vital::class, 'employeeId');
+    }
+    public function diagnosis()
+    {
+        return $this->hasMany(Diagnosis::class, 'employeeId');
+    }
+
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class, 'employeeId');
+    }
 }

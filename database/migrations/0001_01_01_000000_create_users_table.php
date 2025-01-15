@@ -34,23 +34,21 @@ return new class extends Migration
 
         // Create the 'users' table
         Schema::create('users', function (Blueprint $table) {
-            // Define employeeId as the primary key
-            $table->string('employeeId')->primary();
-        
-            // Foreign key for Role
-            $table->foreignIdFor(Role::class)->constrained('roles')->onDelete('cascade');
-        
-            // Foreign key for department, nullable
-            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null');
-        
-            // Other columns
+            $table->id();
+            // Add employeeId as a primary key
+            $table->string('employeeId')->unique();
+            // $table->primary('employeeId'); // Make employeeId the primary key
+            $table->foreignIdFor(Role::class)->constrained('roles')->onDelete('cascade'); // Role reference
+            // Ensure that department_id is nullable and references the departments table
+            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null'); 
             $table->string('firstName');
             $table->string('lastName');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone');
             $table->string('password');
-            $table->enum('status', ['inactive', 'active', 'terminated'])->default('inactive');
+            $table->enum('status', ['inactive', 'active','terminated'])->default('inactive');
+            $table->string('specialization')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -90,27 +88,27 @@ return new class extends Migration
             $table->timestamp('created_at')->nullable();
         });
 
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();  // Session ID (Primary Key)
-            $table->string('employeeId')->nullable()->index();  // Reference to employeeId in users table
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
-        
-            // Set the foreign key to reference employeeId from the users table
-            $table->foreign('employeeId')->references('employeeId')->on('users')->onDelete('set null');
-        });
-        
-
         // Schema::create('sessions', function (Blueprint $table) {
-        //     $table->string('id')->primary();
-        //     $table->foreignId('user_id')->nullable()->index();
+        //     $table->string('id')->primary();  // Session ID (Primary Key)
+        //     $table->string('employeeId')->nullable()->index();  // Reference to employeeId in users table
         //     $table->string('ip_address', 45)->nullable();
         //     $table->text('user_agent')->nullable();
         //     $table->longText('payload');
         //     $table->integer('last_activity')->index();
+        
+        //     // Set the foreign key to reference employeeId from the users table
+        //     $table->foreign('employeeId')->references('employeeId')->on('users')->onDelete('set null');
         // });
+        
+
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->foreignId('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
+        });
 
     }
 
@@ -119,12 +117,13 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sessions');
+        Schema::dropIfExists('sessions'); // Drop first because it references users
         Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('user_info');
-        Schema::dropIfExists('departments');
-        Schema::dropIfExists('hods');
-        Schema::dropIfExists('roles');
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('user_infos'); // References users via employeeId
+        Schema::dropIfExists('hods'); // References users and departments
+        Schema::dropIfExists('users'); // Users is referenced by others
+        Schema::dropIfExists('departments'); // Referenced by hods
+        Schema::dropIfExists('roles'); // Independent
     }
+    
 };

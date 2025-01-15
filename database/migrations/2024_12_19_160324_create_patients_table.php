@@ -40,7 +40,7 @@ return new class extends Migration
             $table->string('department');
             $table->string('appointmentDate');
             $table->string('appointmentTime');
-            $table->enum('status',['scheduled','completed','cancelled'])->default('scheduled');
+            $table->enum('status',['scheduled','completed','cancelled','checked-in'])->default('scheduled');
             $table->timestamps();
         });
 

@@ -46,4 +46,28 @@ class Patient extends Model
             $patient->patientId = 'P-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
         });
     }
+
+
+     /**
+     * Get the appointments for the patient.
+     */
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'patientId', 'patientId');
+    }
+
+    public function vitals()
+    {
+        return $this->hasMany(Vital::class, 'patientId', 'patientId');
+    }
+
+    public function dignosis()
+    {
+        return $this->hasMany(Diagnosis::class, 'patientId', 'patientId');
+    }
+
+    public function prescriptions()
+    {
+        return $this->hasMany(Prescription::class, 'patientId', 'patientId');
+    }
 }

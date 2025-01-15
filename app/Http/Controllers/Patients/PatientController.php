@@ -141,7 +141,7 @@ class PatientController extends Controller
             'email' => 'nullable|email|max:255',
             'address' => 'required|string|max:255',
             'purpose' => 'required|string|max:255',
-            'status' => 'required|string|in:pending,registered,discharged',
+            'status' => 'required|string|in:pending,registered,discharged,transfered,admited,deseased',
             'nhis' => 'nullable|string|max:50',
             'emgRelationship' =>'required|string|in:parent,spouse,sibling,other',
             'emgPhone' => 'required|string'
