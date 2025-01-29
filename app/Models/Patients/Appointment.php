@@ -5,6 +5,8 @@ namespace App\Models\Patients;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\Users\User;
+use App\Models\Users\Department;
+
 class Appointment extends Model
 {
     
@@ -12,6 +14,7 @@ class Appointment extends Model
 
     protected $guarded = [];
 
+    
 
      /**
      * Get the patient that owns the appointment.
@@ -27,6 +30,11 @@ class Appointment extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'employeeId');
+    }
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class);
     }
 
 }

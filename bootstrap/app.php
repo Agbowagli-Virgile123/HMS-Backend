@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use App\Http\Middleware\RoleMiddleware;
  use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 
@@ -17,6 +18,15 @@ return Application::configure(basePath: dirname(__DIR__))
         // Add Sanctum's middleware to the 'api' group
         $middleware->appendToGroup('api', EnsureFrontendRequestsAreStateful::class);
     })
+
+    ->withMiddleware(function (Middleware $middleware) {
+        
+        $middleware->alias([
+            'role' => RoleMiddleware::class
+        ]);
+
+    })
+
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();

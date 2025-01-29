@@ -104,4 +104,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Prescription::class, 'employeeId');
     }
+
+    public function employeeSchedules() {
+        return $this->hasMany(EmployeeSchedule::class, 'employeeId');
+    }
+    
 }

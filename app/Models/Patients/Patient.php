@@ -4,6 +4,7 @@ namespace App\Models\Patients;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Patient extends Model
 {
@@ -14,21 +15,7 @@ class Patient extends Model
     public $incrementing = false; // patientId is not auto-incrementing
     protected $keyType = 'string'; // patientId is a string
 
-    // Define the fillable fields
-    protected $fillable = [
-        'firstName',
-        'lastName',
-        'dob',
-        'gender',
-        'phone',
-        'email',
-        'address',
-        'purpose',
-        'status',
-        'nhis',
-        'emgRelationship',
-        'emgPhone'
-    ];
+    protected $guarded = []; // Allow mass assignment for all attributes
 
     /**
      * Boot method for the model.
@@ -38,17 +25,15 @@ class Patient extends Model
         parent::boot();
 
         static::creating(function ($patient) {
-            // Fetch the last patient ID safely
-            $lastPatient = self::latest('created_at')->first();
-            $nextId = $lastPatient ? intval(substr($lastPatient->patientId, 2)) + 1 : 1;
-
-            // Generate patientId
-            $patient->patientId = 'P-' . str_pad($nextId, 5, '0', STR_PAD_LEFT);
+            // Generate a trimmed UUID-based patientId if not already set
+            if (empty($patient->patientId)) {
+                $uuid = Str::uuid()->toString(); // Generate a UUID
+                $patient->patientId = 'P-' . substr($uuid, 0, 4); // Use the first 4 characters
+            }
         });
     }
 
-
-     /**
+    /**
      * Get the appointments for the patient.
      */
     public function appointments()
@@ -56,16 +41,25 @@ class Patient extends Model
         return $this->hasMany(Appointment::class, 'patientId', 'patientId');
     }
 
+    /**
+     * Get the vitals for the patient.
+     */
     public function vitals()
     {
         return $this->hasMany(Vital::class, 'patientId', 'patientId');
     }
 
+    /**
+     * Get the diagnoses for the patient.
+     */
     public function dignosis()
     {
         return $this->hasMany(Diagnosis::class, 'patientId', 'patientId');
     }
 
+    /**
+     * Get the prescriptions for the patient.
+     */
     public function prescriptions()
     {
         return $this->hasMany(Prescription::class, 'patientId', 'patientId');

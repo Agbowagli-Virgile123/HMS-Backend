@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Schema;
 use App\Models\Patients\Patient;
 use App\Models\Users\User;
 use App\Models\Patients\Prescription;
+use App\Models\Users\Department;
 
 return new class extends Migration
 {
@@ -23,10 +24,10 @@ return new class extends Migration
             $table->string('phone');
             $table->string('email')->nullable();
             $table->string('address');
-            $table->string('purpose');
-            $table->enum('status', ['pending', 'registered','discharged','admited','deseased','transfered'])->default('pending');
+            $table->enum('purpose',['Medication','Appointment Booking','Follow-up','Other']);
+            $table->enum('status', ['pending', 'registered','discharged','admitted','deseased','transferred'])->default('pending');
             $table->string('nhis')->nullable();
-            $table->enum('emgRelationship',['parent','spouse','sibling','other']);    
+            $table->enum('emgRelationship',['parent','spouse','sibling','other']);
             $table->string('emgPhone');
             $table->timestamps();
         });
@@ -35,12 +36,12 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Patient::class,'patientId');
             $table->foreignIdFor(User::class,'employeeId');
+            $table->foreignIdFor(Department::class);
             $table->string('bookerId');
             $table->text('purpose');
-            $table->string('department');
-            $table->string('appointmentDate');
-            $table->string('appointmentTime');
-            $table->enum('status',['scheduled','completed','cancelled','checked-in'])->default('scheduled');
+            $table->date('appointmentDate');
+            $table->time('appointmentTime');
+            $table->enum('status',['pending','scheduled','completed','cancelled','checked-in'])->default('pending');
             $table->timestamps();
         });
 
@@ -110,6 +111,8 @@ return new class extends Migration
             $table->enum('status',['pending','completed']);
             $table->timestamps();
         });
+        
+
     }
 
     /**
@@ -126,5 +129,6 @@ return new class extends Migration
         Schema::dropIfExists('vitals');
         Schema::dropIfExists('appointments');
         Schema::dropIfExists('patients');
+       
     }
 };

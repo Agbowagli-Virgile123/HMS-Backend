@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Patients\Patient;
 use App\Http\Resources\PatientResource;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Http\Controllers\Controller;
 class PatientController extends Controller
 {
@@ -14,10 +15,10 @@ class PatientController extends Controller
     {
         // Get the number of items per page from the request, default to 10
         $perPage = $request->input('per_page', 10);
-    
+
         // Fetch paginated patients, ordered by the latest update
         $patients = Patient::latest('updated_at')->simplePaginate($perPage);
-    
+
         // Check if any patients exist
         if ($patients->count() > 0) {
             return response()->json([
@@ -33,22 +34,22 @@ class PatientController extends Controller
             ], 200);
         }
     }
-    
 
-    
+
+
     public function pendiengPatients(Request $request)
     {
         // Get the number of items per page from the request, default to 10
         $perPage = $request->input('per_page', 10);
-    
+
         // Define the statuses to filter
         $statuses = ['pending'];
-    
+
         // Fetch patients with the specified statuses and apply pagination
         $patients = Patient::whereIn('status', $statuses)
             ->latest('updated_at')
             ->simplePaginate($perPage);
-    
+
         // Check if any patients exist
         if ($patients->count() > 0) {
             return response()->json([
@@ -71,15 +72,15 @@ class PatientController extends Controller
     {
         // Get the number of items per page from the request, default to 10
         $perPage = $request->input('per_page', 10);
-    
+
         // Define the statuses to filter
-        $statuses = ['discharged', 'transfered', 'diseased'];
-    
+        $statuses = ['discharged', 'transferred', 'deseased'];
+
         // Fetch patients with the specified statuses and apply pagination
         $patients = Patient::whereIn('status', $statuses)
             ->latest('updated_at')
             ->simplePaginate($perPage);
-    
+
         // Check if any patients exist
         if ($patients->count() > 0) {
             return response()->json([
@@ -102,15 +103,15 @@ class PatientController extends Controller
     {
         // Get the number of items per page from the request, default to 10
         $perPage = $request->input('per_page', 10);
-    
+
         // Define the statuses to filter
-        $statuses = ['registered', 'admited'];
-    
+        $statuses = ['registered', 'admitted'];
+
         // Fetch patients with the specified statuses and apply pagination
         $patients = Patient::whereIn('status', $statuses)
             ->latest('updated_at')
             ->simplePaginate($perPage);
-    
+
         // Check if any patients exist
         if ($patients->count() > 0) {
             return response()->json([
@@ -126,7 +127,7 @@ class PatientController extends Controller
             ], 200);
         }
     }
-    
+
 
     public function store(Request $request)
     {
@@ -140,8 +141,8 @@ class PatientController extends Controller
             'phone' => 'required|string|max:15',
             'email' => 'nullable|email|max:255',
             'address' => 'required|string|max:255',
-            'purpose' => 'required|string|max:255',
-            'status' => 'required|string|in:pending,registered,discharged,transfered,admited,deseased',
+            'purpose' => 'required|string|in:Medication,Appointment Booking,Follow-up,Other',
+            'status' => 'required|string|in:pending,registered,discharged,transferred,admitted,deseased',
             'nhis' => 'nullable|string|max:50',
             'emgRelationship' =>'required|string|in:parent,spouse,sibling,other',
             'emgPhone' => 'required|string'
@@ -175,11 +176,23 @@ class PatientController extends Controller
     }
 
 
-    public function show(Patient $patient){
+    public function show($patientId){
+
+        $patient = Patient::where('patientId', $patientId)->first();
+
+        if (!$patient) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Patient with the given ID does not exist.',
+                'errors' => null,
+            ], 404);
+        }
+
         return response()->json([
-            'message' => 'Patient retrieved successfully by Id',
+            'success' => true,
             'data' => $patient,
-        ], 200);
+        ]);
+            
     }
 
     public function update(Request $request,Patient $patient){

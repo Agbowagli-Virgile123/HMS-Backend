@@ -28,9 +28,10 @@ return new class extends Migration
             $table->id();
             // departmentName must be unique
             $table->string('departmentName');
+            $table->enum('purpose',['checkup','consultation'])->nullable();
             $table->timestamps();
         });
-        
+
 
         // Create the 'users' table
         Schema::create('users', function (Blueprint $table) {
@@ -40,7 +41,7 @@ return new class extends Migration
             // $table->primary('employeeId'); // Make employeeId the primary key
             $table->foreignIdFor(Role::class)->constrained('roles')->onDelete('cascade'); // Role reference
             // Ensure that department_id is nullable and references the departments table
-            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null'); 
+            $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null');
             $table->string('firstName');
             $table->string('lastName');
             $table->string('email')->unique();
@@ -52,8 +53,17 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
         });
-        
-        
+
+
+        Schema::create('employee_schedules', function (Blueprint $table) {
+        $table->id();
+            $table->foreignIdFor(User::class,'employeeId')->constrained()->onDelete('cascade');
+            $table->enum('day_of_week', ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']);
+            $table->time('start_time');
+            $table->time('end_time');
+            $table->timestamps();
+        });
+
         // Create the 'hod' table without foreign key constraint
         Schema::create('hods', function (Blueprint $table) {
             $table->id();
@@ -61,7 +71,7 @@ return new class extends Migration
             $table->foreignIdFor(Department::class);
             $table->timestamps();
         });
-        
+
         // Create the 'user_info' table
         Schema::create('user_infos', function (Blueprint $table) {
             $table->id();
@@ -71,7 +81,7 @@ return new class extends Migration
                   ->references('employeeId') // Reference to 'employeeId' in the 'users' table
                   ->on('users') // The 'users' table
                   ->onDelete('cascade'); // Cascade delete if the referenced user is deleted
-        
+
             // Other columns
             $table->string('address')->nullable();
             $table->date('dob')->nullable(); // Use 'date' type for date of birth
@@ -95,11 +105,11 @@ return new class extends Migration
         //     $table->text('user_agent')->nullable();
         //     $table->longText('payload');
         //     $table->integer('last_activity')->index();
-        
+
         //     // Set the foreign key to reference employeeId from the users table
         //     $table->foreign('employeeId')->references('employeeId')->on('users')->onDelete('set null');
         // });
-        
+
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
@@ -120,10 +130,11 @@ return new class extends Migration
         Schema::dropIfExists('sessions'); // Drop first because it references users
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('user_infos'); // References users via employeeId
+        Schema::dropIfExists('employee_schedules');
         Schema::dropIfExists('hods'); // References users and departments
         Schema::dropIfExists('users'); // Users is referenced by others
         Schema::dropIfExists('departments'); // Referenced by hods
         Schema::dropIfExists('roles'); // Independent
     }
-    
+
 };

@@ -17,7 +17,9 @@ class DepartmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'departmentName' => fake()->randomElement(['front desk','technical']),
+            //'departmentName' => fake()->randomElement(['front desk','technical']),
+            'departmentName' => 'General Medecine',
+            'purpose' => 'Checkup'
         ];
     }
 }
