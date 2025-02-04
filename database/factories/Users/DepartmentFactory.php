@@ -18,8 +18,8 @@ class DepartmentFactory extends Factory
     {
         return [
             //'departmentName' => fake()->randomElement(['front desk','technical']),
-            'departmentName' => 'General Medecine',
-            'purpose' => 'Checkup'
+            // 'departmentName' => 'General Medecine',
+            // 'purpose' => 'Checkup'
         ];
     }
 }

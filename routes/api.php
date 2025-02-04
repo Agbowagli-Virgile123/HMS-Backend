@@ -19,18 +19,21 @@ Route::post('/register', [UserController::class, 'register']);
 Route::post('/login', [UserController::class, 'login'])->name('login');
 
 
-Route::middleware(['role'])->groupe(function(){
+
+
+Route::middleware(['role'])->group(function () {
     // Appointment Routes
     Route::get('/appointments', [AppointmentController::class, 'index']);
     Route::post('/appointments', [AppointmentController::class, 'store']);
     Route::get('/appointments/{id}', [AppointmentController::class, 'show']);
     Route::patch('/appointments/{id}', [AppointmentController::class, 'update']);
+    Route::patch('/appointments/status/{id}', [AppointmentController::class, 'updateStatus']);
     Route::delete('/appointments/{id}', [AppointmentController::class, 'destroy']);
     Route::get('/appointments/patient/{patientId}', [AppointmentController::class, 'getAppointmentsByPatient']);
     Route::get('/appointments/employee/{employeeId}', [AppointmentController::class, 'getAppointmentsByEmployee']);
     Route::get('/appointments/{patientId}/{employeeId}', [AppointmentController::class, 'getAppointmentsByPatientAndEmployee']);
+       
 });
-
 
 Route::middleware(['auth:sanctum'])->group(function(){
 
@@ -43,7 +46,7 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::get('/Inpatients', [PatientController::class, 'inPatients']);
     Route::get('/Outpatients', [PatientController::class, 'outPatients']);
     Route::post('/patients', [PatientController::class,'store']);
-    Route::get('/patients/{patient}' ,[PatientController::class ,'<sho> </sho>w']);
+    Route::get('/patients/{patient}' ,[PatientController::class ,'show']);
     Route::patch('/patients/{patient}' ,[PatientController::class ,'update']);
     Route::delete('/patients/{patient}' ,[PatientController::class ,'destroy']);
 

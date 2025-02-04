@@ -20,11 +20,19 @@ class RoleMiddleware
         $user = Auth::user();
 
         // Check if the user has one of the allowed roles
-        if (!$user->role->roleName == "nurse" || !$user->role->roleName == "doctor") {
+
+       if($user){
+            if (!$user->role->roleName == "cashier" || !$user->role->roleName == "doctor") {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Unauthorized access.',
+                ], 403);
+            }
+        }else{
             return response()->json([
                 'success' => false,
-                'message' => 'Unauthorized access.',
-            ], 403);
+                'message' => 'Unauthenticated.',
+            ], 404);
         }
 
         return $next($request);

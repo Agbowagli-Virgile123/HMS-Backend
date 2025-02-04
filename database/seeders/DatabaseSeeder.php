@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User\User;
+use App\Models\Users\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        //UserSeeder::factory(10)->create();
 
         // User::factory()->create([
         //     'name' => 'Test User',
@@ -24,6 +24,8 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             RoleSeeder::class,
             PatientSeeder::class,
+            UserSeeder::class,
+            EmployeeScheduleSeeder::class,
         ]);
     }
 }

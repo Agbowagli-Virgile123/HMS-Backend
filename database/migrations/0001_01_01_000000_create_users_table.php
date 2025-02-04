@@ -28,7 +28,12 @@ return new class extends Migration
             $table->id();
             // departmentName must be unique
             $table->string('departmentName');
-            $table->enum('purpose',['checkup','consultation'])->nullable();
+            $table->enum('purpose',['checkup',
+            'consultation','Child healthcare','Heart and vascular treatments',
+             'Bone and joint care','Skin treatments','Medical imaging and diagnosis',
+             'General and specialized surgical procedures','Conseling',
+             'Diagnostics','Treatement','Vaccination','Wellness','Emergency'
+            ])->nullable();
             $table->timestamps();
         });
 

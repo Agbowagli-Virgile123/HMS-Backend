@@ -64,9 +64,6 @@ class AppointmentController extends Controller{
         $appointmentDate = $request['appointmentDate'];
         $status = $request['status'];
 
-        if($patientId){
-            return response()->json(['']);
-        }
 
         // Get the corresponding department based on the purpose
         $department = Department::where('purpose', $purpose)->first();
@@ -159,15 +156,38 @@ class AppointmentController extends Controller{
 
         // Validate request data
         $validated = $request->validate([
-            'appointmentDate' => 'sometimes|date',
-            'status' => 'sometimes|in:pending,scheduled,completed,cancelled,checked-in',
-            'purpose' => 'sometimes|string',
+            'appointmentDate' => 'required|date',
+            'status' => 'required|in:completed,cancelled,checked-in',
+            'purpose' => 'required|string',
         ]);
 
         // Update appointment fields
         $appointment->update($validated);
 
-        return response()->json(['message' => 'Appointment updated successfully.', 'appointment' => $appointment]);
+        return response()->json(['message' => 'Appointment status updated successfully.', 'appointment' => $appointment]);
+    }
+
+
+     /**
+     * Update an appointment status by its ID.
+     */
+    public function updateStatus(Request $request, $id)
+    {
+        $appointment = Appointment::find($id);
+
+        if (!$appointment) {
+            return response()->json(['error' => 'Appointment not found.'], 404);
+        }
+
+        // Validate request data
+        $validated = $request->validate([
+            'status' => 'required|in:completed,cancelled,checked-in',
+        ]);
+
+        // Update appointment fields
+        $appointment->update($validated);
+
+        return response()->json(['message' => 'Appointment status updated successfully.', 'appointment' => $appointment]);
     }
 
     /**

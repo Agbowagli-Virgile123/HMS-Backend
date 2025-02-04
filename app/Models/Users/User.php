@@ -19,6 +19,24 @@ class User extends Authenticatable
     protected $primaryKey = 'employeeId'; // Set employeeId as the primary key
     public $incrementing = false; // Disable auto-incrementing for the primary key
     protected $keyType = 'string'; // Set key type to string if using employeeId as a string
+    protected static function boot()
+    {
+        parent::boot();
+        static::creating(function ($user) {
+            if (!$user->employeeId) {
+                $user->employeeId = self::generateEmployeeId();
+            }
+        });
+    }
+
+    public static function generateEmployeeId()
+    {
+        $lastId = self::max('employeeId'); // Get the last employeeId
+        $nextId = $lastId ? ((int) substr($lastId, 3) + 1) : 1;
+        return 'EMP' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+    }
+
+
     // public function getAuthIdentifier()
     // {
     //     return $this->employeeId;
@@ -52,6 +70,8 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    
 
     /**
      * Get the attributes that should be cast.
