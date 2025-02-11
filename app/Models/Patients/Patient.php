@@ -64,4 +64,13 @@ class Patient extends Model
     {
         return $this->hasMany(Prescription::class, 'patientId', 'patientId');
     }
+
+    /**
+     * Get the visitors for the patient.
+     */
+
+    public function visitors()
+    {
+         return $this->hasMany(Visitors::class, 'patientId', 'patientId');
+    }
 }

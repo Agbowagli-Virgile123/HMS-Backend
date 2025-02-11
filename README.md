@@ -64,3 +64,91 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+
+   public function store(Request $request)
+    {
+        // Validate request data
+        $validated = Validator::make($request->all(), [
+            'patientId' => 'required|exists:patients,patientId',
+            'bookerId' => 'required|string',
+            'purpose' => 'required|in:checkup',
+            'appointmentDate' => 'required|date',
+            'status' => 'required|in:pending,scheduled,completed,cancelled,checked-in',
+        ]);
+
+        if ($validated->fails()) {
+            return response()->json(['error' => $validated->errors()], 400);
+        }
+
+
+
+        $patientId = $request['patientId'];
+        $bookerId = $request['bookerId'];
+        $purpose = $request['purpose'];
+        $appointmentDate = $request['appointmentDate'];
+        $status = $request['status'];
+
+
+        // Get the corresponding department based on the purpose
+        $department = Department::where('purpose', $purpose)->first();
+
+        if (!$department) {
+            return response()->json(['error' => 'No department found for this purpose.'], 404);
+        }
+
+        // Find an available employee in the department for the appointment date
+        $dayOfWeek = date('l', strtotime($appointmentDate));
+
+        // dd([
+        //     'department' => $department,
+        //     'dayOfWeek' => $dayOfWeek,
+        //     'availableEmployees' => User::where('department_id', $department->id)
+        //         ->whereHas('employeeSchedules', function ($query) use ($dayOfWeek) {
+        //             $query->where('day_of_week', $dayOfWeek);
+        //         })
+        //         ->get()
+        // ]);
+
+        $availableEmployee = User::where('department_id', $department->id)
+            ->whereHas('employeeSchedules', function ($query) use ($dayOfWeek) {
+                $query->where('day_of_week', $dayOfWeek);
+            })
+            ->first();
+
+        if (!$availableEmployee) {
+            return response()->json(['error' => 'No employee is available on this date.'], 404);
+        }
+
+
+
+        // Get the employee's schedule to assign the appointment time
+        $schedule = $availableEmployee->employeeSchedules()
+            ->where('day_of_week', $dayOfWeek)
+            ->first();
+
+        if (!$schedule) {
+            return response()->json(['error' => 'No schedule found for the employee on this day.'], 404);
+        }
+
+        $appointmentTime = $schedule->start_time;
+
+
+        // Create the appointment
+        $appointment = Appointment::create([
+            'patientId' => $patientId,
+            'employeeId' => $availableEmployee->employeeId,
+            'department_id' => $department->id,
+            'bookerId' => $bookerId,
+            'purpose' => $purpose,
+            'appointmentDate' => $appointmentDate,
+            'appointmentTime' => $appointmentTime,
+            //'status' => $status,
+            'status' => "scheduled",
+        ]);
+
+        return response()->json([
+            'message' => 'Appointment successfully created.',
+            'appointment' => $appointment,
+        ]);
+    }

@@ -111,7 +111,19 @@ return new class extends Migration
             $table->enum('status',['pending','completed']);
             $table->timestamps();
         });
-        
+
+
+        //visitors table
+        Schema::create('visitors', function(Blueprint $table) {
+            $table->id();
+            $table->foreignIdFor(Patient::class, 'patientId');
+            $table->string('fullName');
+            $table->string('address');
+            $table->string('phone');
+            $table->integer('numOfPeople');
+            $table->enum('relationship', ['parent', 'sibling', 'spouse','child', 'relative', 'friend', 'other']);
+            $table->timestamps();
+        });
 
     }
 
@@ -129,6 +141,6 @@ return new class extends Migration
         Schema::dropIfExists('vitals');
         Schema::dropIfExists('appointments');
         Schema::dropIfExists('patients');
-       
+
     }
 };

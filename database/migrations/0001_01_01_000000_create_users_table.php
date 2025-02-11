@@ -19,7 +19,7 @@ return new class extends Migration
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
             // roleName must be unique
-            $table->string('roleName');
+            $table->string('roleName')->unique();
             $table->timestamps();
         });
 
@@ -34,6 +34,7 @@ return new class extends Migration
              'General and specialized surgical procedures','Conseling',
              'Diagnostics','Treatement','Vaccination','Wellness','Emergency'
             ])->nullable();
+            $table->integer('number_of_minute_for_appointment')->default(10); // Set a default duration
             $table->timestamps();
         });
 
@@ -62,10 +63,12 @@ return new class extends Migration
 
         Schema::create('employee_schedules', function (Blueprint $table) {
         $table->id();
-            $table->foreignIdFor(User::class,'employeeId')->constrained()->onDelete('cascade');
+            $table->foreignIdFor(User::class,'employeeId');
             $table->enum('day_of_week', ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']);
             $table->time('start_time');
             $table->time('end_time');
+            $table->time('appointment_start_time');
+            $table->time('appointment_end_time');
             $table->timestamps();
         });
 

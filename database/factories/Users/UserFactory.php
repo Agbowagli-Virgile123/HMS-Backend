@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 class UserFactory extends Factory
 {
     protected static ?string $password;
+    
     /**
      * Define the model's default state.
      *
@@ -24,10 +25,22 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+
+        $role = Role::inRandomOrder()->first();
+        $roleId = $role ? $role->id : Role::create(['roleName' => 'receptionist'])->id;
+
+        $department = Department::inRandomOrder()->first();
+        $departmentId = $department ? $department->id : Department::create([
+            'departmentName' => 'General Medicine',
+            'purpose' => 'checkup'
+        ])->id;
+
         return [
+
+
             //'employeeId' => 'EMP' . str_pad(User::max('employeeId') + 1, 4, '0', STR_PAD_LEFT),
-            'role_id' => Role::inRandomOrder()->value('id') ?? Role::factory()->create()->id,
-            'department_id' => Department::inRandomOrder()->value('id') ?? Department::factory()->create()->id,
+           'role_id' => $roleId,
+            'department_id' => $departmentId,
             'firstName' => fake()->firstName(),
             'lastName' => fake()->lastName(),
             'email' => fake()->unique()->safeEmail(),

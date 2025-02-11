@@ -14,29 +14,32 @@ class DepartmentSeeder extends Seeder
     public function run(): void
     {
         $departments = [
-            ['departmentName' => 'General Medicine', 'purpose' => 'checkup'],
-            ['departmentName' => 'Pediatrics', 'purpose' => 'Child healthcare'],
-            ['departmentName' => 'Cardiology', 'purpose' => 'Heart and vascular treatments'],
-            ['departmentName' => 'Orthopedics', 'purpose' => 'Bone and joint care'],
-            ['departmentName' => 'Dermatology', 'purpose' => 'Skin treatments'],
-            ['departmentName' => 'Radiology', 'purpose' => 'Medical imaging and diagnosis'],
-            ['departmentName' => 'Surgery', 'purpose' => 'General and specialized surgical procedures'],
-            ['departmentName' => 'General Medecine', 'purpose' => 'Consultation '],
-            ['departmentName' => 'Psychiatry', 'purpose' => 'Conseling'],
-            ['departmentName' => 'Laboratory', 'purpose' => 'Diagnostics'],
-            ['departmentName' => 'General Medecine', 'purpose' => 'Treatement'],
-            ['departmentName' => 'Immunization Unit', 'purpose' => 'Vaccination'],
-            ['departmentName' => 'Wellness & Preventive Medecine', 'purpose' => 'Wellness'],
-            ['departmentName' => 'Emergency Unit', 'purpose' => 'Emergency'],
+            ['departmentName' => 'General Medicine', 'purpose' => 'checkup','number_of_minute_for_appointment'=> 15],
+            ['departmentName' => 'Pediatrics', 'purpose' => 'Child healthcare','number_of_minute_for_appointment'=> 10],
+            ['departmentName' => 'Cardiology', 'purpose' => 'Heart and vascular treatments','number_of_minute_for_appointment'=> 13],
+            ['departmentName' => 'Orthopedics', 'purpose' => 'Bone and joint care','number_of_minute_for_appointment'=> 20],
+            ['departmentName' => 'Dermatology', 'purpose' => 'Skin treatments','number_of_minute_for_appointment'=> 24],
+            ['departmentName' => 'Radiology', 'purpose' => 'Medical imaging and diagnosis','number_of_minute_for_appointment'=> 15],
+            ['departmentName' => 'Surgery', 'purpose' => 'General and specialized surgical procedures','number_of_minute_for_appointment'=> 19],
+            ['departmentName' => 'General Medecine', 'purpose' => 'Consultation','number_of_minute_for_appointment'=> 11],
+            ['departmentName' => 'Psychiatry', 'purpose' => 'Conseling','number_of_minute_for_appointment'=> 10],
+            ['departmentName' => 'Laboratory', 'purpose' => 'Diagnostics','number_of_minute_for_appointment'=> 16],
+            ['departmentName' => 'General Medecine', 'purpose' => 'Treatement','number_of_minute_for_appointment'=> 19],
+            ['departmentName' => 'Immunization Unit', 'purpose' => 'Vaccination','number_of_minute_for_appointment'=> 10],
+            ['departmentName' => 'Wellness & Preventive Medecine', 'purpose' => 'Wellness','number_of_minute_for_appointment'=> 21],
+            ['departmentName' => 'Emergency Unit', 'purpose' => 'Emergency','number_of_minute_for_appointment'=> 18],
 
 
         ];
 
         foreach ($departments as $department) {
-            Department::firstOrCreate(['departmentName' => $department['departmentName']], [
-                'purpose' => $department['purpose']
-            ]);
+            Department::firstOrCreate(
+                ['departmentName' => $department['departmentName']], 
+                ['purpose' => $department['purpose'], 'number_of_minute_for_appointment' => $department['number_of_minute_for_appointment']]
+            );
         }
+
+        
     }
 }
 

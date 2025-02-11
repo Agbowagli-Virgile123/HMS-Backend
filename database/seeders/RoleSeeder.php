@@ -15,8 +15,13 @@ class RoleSeeder extends Seeder
     {
         $roles = ['doctor', 'receptionist', 'consultant', 'hr', 'cashier', 'admin'];
 
+        // foreach ($roles as $role) {
+        //     Role::firstOrCreate(['roleName' => $role]);
+        // }
+
+        
         foreach ($roles as $role) {
-            Role::firstOrCreate(['roleName' => $role]);
+            Role::updateOrCreate(['roleName' => $role], ['roleName' => $role]);
         }
     }
 }
