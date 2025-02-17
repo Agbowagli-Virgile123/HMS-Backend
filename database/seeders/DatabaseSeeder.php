@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         //UserSeeder::factory(10)->create();
 
         $role = Role::inRandomOrder()->first();
-        $roleId = $role ? $role->id : Role::create(['roleName' => 'receptionist'])->id;
+        $roleId = $role ? $role->id : Role::create(['roleName' => 'hr'])->id;
 
         $department = Department::inRandomOrder()->first();
         $departmentId = $department ? $department->id : Department::create([
@@ -38,6 +38,7 @@ class DatabaseSeeder extends Seeder
             'email_verified_at' => now(),
             'phone' => '04433992288',
             'password' => 'password',
+            'address' => '123, Main Street, Lagos',
             'status' => 'active',
             'specialization' =>'',
             'remember_token' => Str::random(10),
@@ -52,6 +53,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             EmployeeScheduleSeeder::class,
             VisitorSeeder::class,
+            AppointmentSeeder::class,
         ]);
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Users\UserController;
 use App\Http\Controllers\Patients\PatientController;
 use App\Http\Controllers\Patients\AppointmentController;
 use App\Http\Controllers\Patients\VisitorController;
+use App\Http\Middleware\JsonAuthenticate;
 
 
 
@@ -16,15 +17,23 @@ Route::get('/user',function(Request $request){
 
 //SignUp Route
 Route::post('/register', [UserController::class, 'register']);
-//Login Route
-Route::post('/login', [UserController::class, 'login'])->name('login');
 
+//Login Route
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
+
+Route::post('/login', [UserController::class, 'login']);
 
 
 Route::middleware(['auth:sanctum','role'])->group(function(){
 
     //Logout Route
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
+
+
+    //Users Routes
+    Route::get('/employees' , [UserController::class, 'index']);
 
     //Patients Routes
     Route::get('/patients', [PatientController::class, 'allPatients']);
@@ -53,6 +62,9 @@ Route::middleware(['auth:sanctum','role'])->group(function(){
     Route::get('visitors/{id}', [VisitorController::class, 'show']);
     Route::patch('visitors/{id}', [VisitorController::class, 'update']);
     Route::delete('visitors/{id}', [VisitorController::class, 'destroy']);
+
+    // Patient Visitors Routes
+    Route::get('visitors/patient/{patientId}', [VisitorController::class, 'patientVisitors']);
 
 });
 

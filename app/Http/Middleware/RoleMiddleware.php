@@ -23,7 +23,7 @@ class RoleMiddleware
 
         if($user){
 
-            if ($user->role->roleName != "receptionist" && $user->role->roleName != "doctor") {
+            if ($user->role->roleName != "receptionist" && $user->role->roleName != "doctor" && $user->role->roleName != "hr") {
                 return response()->json([
                     'success' => false,
                     'message' => 'Unauthorized access.',
@@ -35,7 +35,7 @@ class RoleMiddleware
                 'success' => false,
                 'message' => 'Not authenticated',
             ],404);
-        }  
+        }
 
         return $next($request);
 

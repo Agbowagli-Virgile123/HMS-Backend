@@ -17,11 +17,11 @@ class PatientFactory extends Factory
     public function definition(): array
     {
         return [
-            
+
             'firstName' =>fake()->firstName(),
             'lastName' =>fake()->lastName(),
             'dob' =>fake()->date(),
-            'gender' => fake()->randomElement(['male','female','other']),
+            'gender' => fake()->randomElement(['male','female']),
             'phone' =>fake()->phoneNumber(),
             'email' => fake()->email(),
             'address' =>fake()->address(),
@@ -30,7 +30,7 @@ class PatientFactory extends Factory
             'nhis' =>fake()->randomElement(['NHIS001','NHIS002']),
             'emgRelationship' =>fake()->randomElement(['parent','spouse','sibling','other']),
             'emgPhone' =>fake()->phoneNumber()
-            
+
         ];
     }
 }

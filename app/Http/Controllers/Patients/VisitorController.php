@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Patients;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\VisitorResource;
+use App\Models\Patients\Patient;
 use Illuminate\Http\Request;
 use App\Models\Patients\Visitors;
 use Illuminate\Support\Facades\Validator;
@@ -31,8 +32,45 @@ class VisitorController extends Controller
 
         return response()->json([
             'message' => 'Visitors retrieved successfully',
-            'vistors'=> VisitorResource::collection($visitors),
+            'visitors'=> VisitorResource::collection($visitors),
         ], 200);
+    }
+
+
+    //get all visitors for a specific patient
+    public function patientVisitors($urlPatientId)
+    {
+        //retrieve all visitors for a specific patient
+
+        $patient = Patient::where('patientId', $urlPatientId)->first();
+
+        if(!$patient){
+
+            return response()->json([
+                'message' => 'Patient not found',
+            ], 404);
+
+        }else{
+
+            $patientId = $patient->patientId;
+
+            $visitors = Visitors::where('patientId', $patientId)->get();
+
+
+            if($visitors->isEmpty()){
+                return response()->json([
+                    'message' => 'No Visitors found for this patient',
+                ], 404);
+            }
+
+            return response()->json([
+                'message' => 'Visitors retrieved successfully',
+                'visitors'=> VisitorResource::collection($visitors),
+            ], 200);
+        }
+
+
+
     }
 
 

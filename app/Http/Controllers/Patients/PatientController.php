@@ -192,7 +192,7 @@ class PatientController extends Controller
             'success' => true,
             'data' => $patient,
         ]);
-            
+
     }
 
     public function update(Request $request,Patient $patient){

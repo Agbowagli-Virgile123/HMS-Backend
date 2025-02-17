@@ -6,10 +6,54 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 
 
 class UserController extends Controller
 {
+    public function index(Request $request){
+
+        //Get the number of items per page from the request, default to 10
+        $perPage = $request->input('per_page', 10);
+
+        //Fetch paginated users, ordered by the latest update
+        //$users = User::latest('created_at')->simplePaginate($perPage);
+        $users = User::with(['role', 'department'])->paginate($perPage); // Eager load role and department
+
+        //Check if any users exist
+
+        if($users != []){
+
+            // Return a custom response format
+            return response()->json([
+                'success' => true,
+                'message' => 'Users retrieved successfully',
+                'data' => [
+                    'current_page' => $users->currentPage(),
+                    'employees' => UserResource::collection($users), // Apply UserResource
+                    'first_page_url' => $users->url(1),
+                    'from' => $users->firstItem(),
+                    'last_page' => $users->lastPage(),
+                    'last_page_url' => $users->url($users->lastPage()),
+                    'next_page_url' => $users->nextPageUrl(),
+                    'per_page' => $users->perPage(),
+                    'prev_page_url' => $users->previousPageUrl(),
+                    'to' => $users->lastItem(),
+                    'total' => $users->total()
+                ]
+            ], 200);
+
+            //return UserResource::collection($users);
+
+        }else{
+
+            return response()->json([
+            'message' => 'No records available',
+            'employees' => [],
+            ], 200);
+        }
+    }
+
     public function register(Request $request) {
         $validator = Validator::make($request->all(), [
             'employeeId' => 'required|string|unique:users,employeeId', // Ensure employeeId is unique

@@ -23,16 +23,15 @@ class AppointmentController extends Controller{
     {
         // Retrieve all appointments
         // $appointments = Appointment::all();
-        $appointments = Appointment::with(['patient','user'])->get();
+        $appointments = Appointment::with(['patient','user'])->orderBy('created_at','desc') ->get();
 
         // foreach($appointments as $appointment){
         //     $patientName = $appointment->patient->firstName;
         // }
-
         if ($appointments->isEmpty()) {
             return response()->json([
-                'message' => 'No appointments found.'],
-                404);
+                'message' => 'No appointments found.',
+                'appointments' => []]);
         }
 
 
@@ -50,7 +49,7 @@ class AppointmentController extends Controller{
         $validated = Validator::make($request->all(), [
             'patientId' => 'required|exists:patients,patientId',
             'bookerId' => 'required|string',
-            'purpose' => 'required|in:checkup,Heart and vascular treatments',
+            'purpose' => 'required|in:checkup,heart and vascular treatments,vaccination,consultation,conseilling',
             'appointmentDate' => 'required|date',
             'status' => 'required|in:pending,scheduled,completed,cancelled,checked-in',
         ]);
@@ -161,13 +160,13 @@ class AppointmentController extends Controller{
 
 
          // Send Email Notification
-        Mail::to($availableEmployee->email)->send(new AppointmentBookedMail($appointment));
+        //Mail::to($availableEmployee->email)->send(new AppointmentBookedMail($appointment));
 
-        Mail::to($patient->email)->send(new AppointmentBookedMail($appointment));
+        //Mail::to($patient->email)->send(new AppointmentBookedMail($appointment));
 
 
         return response()->json([
-            'message' => 'Appointment successfully created and Email notifications sent to the employee and patient.',
+            'message' => 'Appointment successfully created.',
             'appointment' => $appointment,
         ]);
     }

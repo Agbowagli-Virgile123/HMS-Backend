@@ -29,10 +29,10 @@ return new class extends Migration
             // departmentName must be unique
             $table->string('departmentName');
             $table->enum('purpose',['checkup',
-            'consultation','Child healthcare','Heart and vascular treatments',
-             'Bone and joint care','Skin treatments','Medical imaging and diagnosis',
-             'General and specialized surgical procedures','Conseling',
-             'Diagnostics','Treatement','Vaccination','Wellness','Emergency'
+            'consultation','child healthcare','heart and vascular treatments',
+             'bone and joint care','skin treatments','medical imaging and diagnosis',
+             'general and specialized surgical procedures','conseling',
+             'diagnostics','treatement','vaccination','wellness','emergency',
             ])->nullable();
             $table->integer('number_of_minute_for_appointment')->default(10); // Set a default duration
             $table->timestamps();
@@ -45,7 +45,7 @@ return new class extends Migration
             // Add employeeId as a primary key
             $table->string('employeeId')->unique();
             // $table->primary('employeeId'); // Make employeeId the primary key
-            $table->foreignIdFor(Role::class)->constrained('roles')->onDelete('cascade'); // Role reference
+            $table->foreignIdFor(Role::class)->nullable()->constrained('roles')->onDelete('set null'); // Role reference
             // Ensure that department_id is nullable and references the departments table
             $table->foreignId('department_id')->nullable()->constrained('departments')->onDelete('set null');
             $table->string('firstName');
@@ -54,6 +54,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone');
             $table->string('password');
+            $table->string('address')->nullable();
             $table->enum('status', ['inactive', 'active','terminated'])->default('inactive');
             $table->string('specialization')->nullable();
             $table->rememberToken();
@@ -63,7 +64,7 @@ return new class extends Migration
 
         Schema::create('employee_schedules', function (Blueprint $table) {
         $table->id();
-            $table->foreignIdFor(User::class,'employeeId');
+            $table->foreignIdFor(User::class,'employeeId')->nullable()->constrained('users')->onDelete('set null');
             $table->enum('day_of_week', ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']);
             $table->time('start_time');
             $table->time('end_time');
@@ -75,8 +76,8 @@ return new class extends Migration
         // Create the 'hod' table without foreign key constraint
         Schema::create('hods', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class);
-            $table->foreignIdFor(Department::class);
+            $table->foreignIdFor(User::class,'employeeId')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignIdFor(Department::class)->nullable()->constrained('departments')->onDelete('set null');
             $table->timestamps();
         });
 
@@ -121,7 +122,7 @@ return new class extends Migration
 
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
+            $table->foreignId('user_id')->index()->constrained('users')->onDelete('cascade');
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->longText('payload');

@@ -17,7 +17,7 @@ use Illuminate\Support\Str;
 class UserFactory extends Factory
 {
     protected static ?string $password;
-    
+
     /**
      * Define the model's default state.
      *
@@ -47,6 +47,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'phone' => fake()->phoneNumber(),
             'password' => static::$password ??= Hash::make('password'),
+            'address' => fake()->address(),
             'status' => fake()->randomElement(['inactive', 'active', 'terminated']),
             'specialization' =>fake()->sentence(),
             'remember_token' => Str::random(10),

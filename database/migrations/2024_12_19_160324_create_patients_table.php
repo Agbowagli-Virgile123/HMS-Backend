@@ -34,9 +34,9 @@ return new class extends Migration
 
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Patient::class,'patientId');
-            $table->foreignIdFor(User::class,'employeeId');
-            $table->foreignIdFor(Department::class);
+            $table->foreignIdFor(Patient::class,'patientId')->nullable()->constrained('patients')->onDelete('set null');
+            $table->foreignIdFor(User::class,'employeeId')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignIdFor(Department::class)->nullable()->constrained('departments')->onDelete('set null');
             $table->string('bookerId');
             $table->text('purpose');
             $table->date('appointmentDate');
@@ -47,8 +47,8 @@ return new class extends Migration
 
         Schema::create('vitals', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Patient::class,'patientId');
-            $table->foreignIdFor(User::class,'employeeId');
+            $table->foreignIdFor(Patient::class,'patientId')->nullable()->constrained('patients')->onDelete('set null');
+            $table->foreignIdFor(User::class,'employeeId')->nullable()->constrained('users')->onDelete('set null');
             $table->string('bloodPressure');
             $table->string('bpm')->nullable();
             $table->string('temperature');
@@ -62,8 +62,8 @@ return new class extends Migration
 
         Schema::create('diagnosis', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Patient::class,'patientId');
-            $table->foreignIdFor(User::class,'employeeId');
+            $table->foreignIdFor(Patient::class,'patientId')->nullable()->constrained('patients')->onDelete('set null');
+            $table->foreignIdFor(User::class,'employeeId')->nullable()->constrained('users')->onDelete('set null');
             $table->text('diagnosis');
             $table->text('recommendation');
             $table->timestamps();
@@ -71,8 +71,8 @@ return new class extends Migration
 
         Schema::create('prescriptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Patient::class,'patientId');
-            $table->foreignIdFor(User::class,'employeeId');
+            $table->foreignIdFor(Patient::class,'patientId')->nullable()->constrained('patients')->onDelete('set null');
+            $table->foreignIdFor(User::class,'employeeId')->nullable()->constrained('users')->onDelete('set null');
             $table->string('prescriptionDate');
             $table->text('note');
             $table->timestamps();
@@ -80,7 +80,7 @@ return new class extends Migration
 
         Schema::create('prescriptionItems', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Prescription::class);
+            $table->foreignIdFor(Prescription::class)->nullable()->constrained('prescriptions')->onDelete('set null');
             $table->string('medecineName');
             $table->string('dosage');
             $table->string('duration');
@@ -116,7 +116,7 @@ return new class extends Migration
         //visitors table
         Schema::create('visitors', function(Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Patient::class, 'patientId');
+            $table->foreignIdFor(Patient::class, 'patientId')->nullable()->constrained('patients')->onDelete('set null');
             $table->string('fullName');
             $table->string('address');
             $table->string('phone');
@@ -140,6 +140,7 @@ return new class extends Migration
         Schema::dropIfExists('diagnosis');
         Schema::dropIfExists('vitals');
         Schema::dropIfExists('appointments');
+        Schema::dropIfExists('visitors');
         Schema::dropIfExists('patients');
 
     }
